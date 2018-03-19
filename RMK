@@ -15,70 +15,70 @@
    #   R       R   a a a a  n      n   d d d d    0 0 0 0   m     m    m  !!!  z z z z z  3 3 3 3    #
    #                                                                                                 # 
    #                                                                                                 #
-   #       M             M   3 3 3 3         K       K                           N         N         #
-   #       MM           MM          3        K     K                         //  N N       N         #
-   #       M M         M M          3        K   K                          //   N  N      N         #
-   #       M  M       M  M          3        K K               a           //    N   N     N         #
-   #       M   M     M   M     3 3 3         KK          a a a a  p p p p        N    N    N         #
-   #       M    M   M    M          3        K K        a      a  p      p       N     N   N         #
-   #       M     M M     M          3        K   K      a      a  p      p       N      N  N         #
-   #       M      M      M          3        K     K    a      a  p      p       N       N N         #
-   #       M             M   3 3 3 3         K       K   a a a a  p p p p        N         N         #
-   #                                                              p                                  #
-   #                                                              p                                  # 
-   #                                                              p                                  #
-   #                                                              p                                  #
+   #      M             M   3 3 3 3         K       K                           N         N  !!!     #
+   #      MM           MM          3        K     K                         //  N N       N  ! !     #
+   #      M M         M M          3        K   K                          //   N  N      N  ! !     #
+   #      M  M       M  M          3        K K               a           //    N   N     N  ! !     #
+   #      M   M     M   M     3 3 3         KK          a a a a  p p p p        N    N    N  ! !     #
+   #      M    M   M    M          3        K K        a      a  p      p       N     N   N  !!!     #
+   #      M     M M     M          3        K   K      a      a  p      p       N      N  N          #
+   #      M      M      M          3        K     K    a      a  p      p       N       N N  !!!     #
+   #      M             M   3 3 3 3         K       K   a a a a  p p p p        N         N  !!!     #
+   #                                                             p                                   #
+   #                                                             p                                   # 
+   #                                                             p                                   #
+   #                                                             p                                   #
    #                                                                                                 #
    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 
 
 
+#Print "Please Enter to Proceed"
+echo 'Please Enter to Proceed'
 
-echo 'Pl3a$3 3nt3r to Pr0c33d'
+#Initiate admin access so that programs do not require further input of user account's password
+#Print "Thank You" 
+sudo echo 'Thank You'
 
-sudo echo 'Thank Y0u'
-
-#Check To See What Connections Are Up
+#Check to see what connections are up
+#ie what adapters are currently working
 adapter=$(ip -o link show | awk '/state UP/{ gsub("\:",""); print $2}')
 
-#Print Active adapter name
+#Print active adapter's name
 echo "Here Is My Connected Adapter's Name: "$adapter
 
-#Print Current Mac Address
-#macchanger -s $adapter
-
-#Get SSID of currently Connected Network
+#Get SSID of currently connected wireless network
 SSID=$(iwgetid -r)
 
-#
+#Print "Here Is My Connected SSID"
 echo 'Here Is My Connected SSID: '$SSID
 
-#
+#Grabs the BSSID for the currently connected wireless network
 BSSIDdirty=$(sudo awk 'NR == 13' /etc/NetworkManager/system-connections/$SSID) #~/Programs/Scripts/bin/D2D7B1)
 
-#
-#echo this is BSSIDdirty $BSSIDdirty
+#Prints "This Is the Dirty BSSID :" and BSSIDdirty variable
+#echo 'This Is the Dirty BSSID: '$BSSIDdirty
 
-#
+#This is to clean up the dirty BSSID so that it is readable by future programs as input
 BSSIDclean=$(echo $BSSIDdirty | awk -F"=" '{print $2}' | awk -F";" '{print $1}')
 
-#
+#Print "This Is The BSSID: " and BSSID variable
 echo 'This Is The BSSID: '$BSSIDclean
 
-#Grabs The PSK For The Currently Connected Network
+#Grabs the PSK ie password for the currently connected wireless network
 PSKdirty=$(sudo awk 'NR == 18' /etc/NetworkManager/system-connections/$SSID)
 
-#Output Dirty PSK
+#Print "This Is The Dirty PSK: " and PSKdirty variable
 #echo this is the PSKdirty $PSKdirty
 
-#Cleaning up PSK for input later
+#This is to clean up the dirty PSK so that it is readable by future programs as input
 PSKclean=$(echo $PSKdirty | awk -F"=" '{print $2}')
 
-#Output Clean PSK
+#Print "This Is The PSK: " and PSK variable
 echo 'This Is The PSK: '$PSKclean
 
-#Disconnect From Network
+#Disconnect from network
 nmcli d disconnect $adapter
 
 #Stop Network-Manager Service
@@ -91,11 +91,13 @@ sudo service networking stop
 echo 'Network Service Stop'
 sleep 0.1
 
+#Randomize Me Kap'n! aka "RMK" works fine without initializing this command
 #macchanger start
 
 #Randomize Mac Address With Same Vendor
 sudo macchanger -a $adapter
 
+#Randomize Me Kap'n! aka "RMK" works fine without initializing this command
 #macchanger stop
 
 #Start Network-Manager Service
@@ -108,19 +110,16 @@ sudo service networking start
 echo 'Network Service Start'
 sleep 3
 
-#Connect to Previously Connected Network
+#Connect to previously connected wireless network
 nmcli d wifi connect $BSSIDclean password $PSKclean
 
-#Windscribe VPN Connects
-windscribe connect
+#Windscribe VPN connects
+#Will automatically connect to US-East if othe location is not spedicifed
+#Do not enable this option if you do not have a Windscribe VPN account
+#windscribe connecto
 
 
 
 
-
-#BSSID=$(nmcli -f in-use,ssid,bssid,signal,bars  dev wifi)
-
-
-
-
-
+#Extra command that is not in use, it is nice to know if needing statistics display for wifi
+#nmcli -f in-use,ssid,bssid,signal,bars  dev wifi
