@@ -1,0 +1,126 @@
+#!/bin/bash
+
+ 
+   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+   #                                                                                                 #
+   #   R R R R R                                                                                     #
+   #   R        R                             d   0 0 0 0                 !!!             3 3 3 3    #
+   #   R        R                             d  0      00                ! !                    3   #
+   #   R        R                             d  0     0 0                ! !                    3   #
+   #   R R R R R         a                    d  0    0  0                ! !                    3   #
+   #   R   R       a a a a  n n n n    d d d d   0   0   0  m  m m  m m   ! !  z z z z z    3 3 3    #
+   #   R    R     a      a  nn     n  d       d  0  0    0  m m   m    m  !!!        z           3   #
+   #   R     R    a      a  n      n  d       d  0 0     0  m     m    m           z             3   #
+   #   R      R   a      a  n      n  d       d  00      0  m     m    m  !!!    z               3   #
+   #   R       R   a a a a  n      n   d d d d    0 0 0 0   m     m    m  !!!  z z z z z  3 3 3 3    #
+   #                                                                                                 # 
+   #                                                                                                 #
+   #       M             M   3 3 3 3         K       K                           N         N         #
+   #       MM           MM          3        K     K                         //  N N       N         #
+   #       M M         M M          3        K   K                          //   N  N      N         #
+   #       M  M       M  M          3        K K               a           //    N   N     N         #
+   #       M   M     M   M     3 3 3         KK          a a a a  p p p p        N    N    N         #
+   #       M    M   M    M          3        K K        a      a  p      p       N     N   N         #
+   #       M     M M     M          3        K   K      a      a  p      p       N      N  N         #
+   #       M      M      M          3        K     K    a      a  p      p       N       N N         #
+   #       M             M   3 3 3 3         K       K   a a a a  p p p p        N         N         #
+   #                                                              p                                  #
+   #                                                              p                                  # 
+   #                                                              p                                  #
+   #                                                              p                                  #
+   #                                                                                                 #
+   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+
+
+
+
+echo 'Pl3a$3 3nt3r to Pr0c33d'
+
+sudo echo 'Thank Y0u'
+
+#Check To See What Connections Are Up
+adapter=$(ip -o link show | awk '/state UP/{ gsub("\:",""); print $2}')
+
+#Print Active adapter name
+echo "Here Is My Connected Adapter's Name: "$adapter
+
+#Print Current Mac Address
+#macchanger -s $adapter
+
+#Get SSID of currently Connected Network
+SSID=$(iwgetid -r)
+
+#
+echo 'Here Is My Connected SSID: '$SSID
+
+#
+BSSIDdirty=$(sudo awk 'NR == 13' /etc/NetworkManager/system-connections/$SSID) #~/Programs/Scripts/bin/D2D7B1)
+
+#
+#echo this is BSSIDdirty $BSSIDdirty
+
+#
+BSSIDclean=$(echo $BSSIDdirty | awk -F"=" '{print $2}' | awk -F";" '{print $1}')
+
+#
+echo 'This Is The BSSID: '$BSSIDclean
+
+#Grabs The PSK For The Currently Connected Network
+PSKdirty=$(sudo awk 'NR == 18' /etc/NetworkManager/system-connections/$SSID)
+
+#Output Dirty PSK
+#echo this is the PSKdirty $PSKdirty
+
+#Cleaning up PSK for input later
+PSKclean=$(echo $PSKdirty | awk -F"=" '{print $2}')
+
+#Output Clean PSK
+echo 'This Is The PSK: '$PSKclean
+
+#Disconnect From Network
+nmcli d disconnect $adapter
+
+#Stop Network-Manager Service
+sudo service network-manager stop
+echo 'Network-Manager Service Stop'
+sleep 0.1
+
+#Stop Network Service
+sudo service networking stop
+echo 'Network Service Stop'
+sleep 0.1
+
+#macchanger start
+
+#Randomize Mac Address With Same Vendor
+sudo macchanger -a $adapter
+
+#macchanger stop
+
+#Start Network-Manager Service
+sudo service network-manager start
+echo 'Network-Manager Service Start'
+sleep 0.8
+
+#Start Networking Service
+sudo service networking start
+echo 'Network Service Start'
+sleep 3
+
+#Connect to Previously Connected Network
+nmcli d wifi connect $BSSIDclean password $PSKclean
+
+#Windscribe VPN Connects
+windscribe connect
+
+
+
+
+
+#BSSID=$(nmcli -f in-use,ssid,bssid,signal,bars  dev wifi)
+
+
+
+
+
