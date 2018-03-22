@@ -31,22 +31,151 @@
    #                                                                                                 #
    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
+#Initialize default global variables
+AdpaterConnected='n/a'
+SSID='n/a'
+BSSIDclean='n/a'
+PSKclean='n/a'
+WindscribeLocation=''
+
+#Initialize persistent global variables
+#
+#WindscribeLocation==
+#
 
 
+#Functions
+
+#Windscribe Choice Function
+Windscribe_Choice () {
+
+read -n1 -p "Would You Like to Input a Location? [y/N]: " LocationResponse #response is local variable
+echo ''
+if [ $LocationResponse == "y" ] || [ $LocationResponse == "Y" ]; then
+echo 'Location              Short Name' 
+echo 'US Central            US-C'
+echo 'US East               US'
+echo 'US West               US-W'
+echo 'WINDFLIX UK           GB-N'
+echo 'WINDFLIX US           US-N'
+echo 'Canada East           CA'
+echo 'Canada West           CA-W'
+echo 'Austria               AT'
+echo 'Belgium               BE'
+echo 'Bulgaria              BG'
+echo 'Czech Republic        CZ'
+echo 'Denmark               DK'
+echo 'Finland               FI'
+echo 'France                FR'
+echo 'Germany               DE'
+echo 'Greece                GR'
+echo 'Hungary               HU'
+echo 'Iceland               IS'
+echo 'Ireland               IE'
+echo 'Israel                IL'
+echo 'Italy                 IT'
+echo 'Latvia                LV'
+echo 'Lithuania             LT'
+echo 'Luxembourg            LU'
+echo 'Moldova               MD'
+echo 'Netherlands           NL'
+echo 'Norway                NO'
+echo 'Poland                PL'
+echo 'Portugal              PT'
+echo 'Romania               RO'
+echo 'Slovakia              SK'
+echo 'Spain                 ES'
+echo 'Sweden                SE'
+echo 'Switzerland           CH'
+echo 'United Kingdom        GB'
+echo 'Azerbaijan            AZ'
+echo 'India                 IN'
+echo 'Libya                 LY'
+echo 'Russia                RU'
+echo 'South Africa          ZA'
+echo 'Turkey                TR'
+echo 'Ukraine               UA'
+echo 'Australia             AU'
+echo 'New Zealand           NZ'
+echo 'Hong Kong             HK'
+echo 'Indonesia             ID'
+echo 'Japan                 JP'
+echo 'Malaysia              MY'
+echo 'Singapore             SG'
+echo 'South Korea           KR'
+echo 'Taiwan                TW'
+echo 'Thailand              TH'
+echo 'United Arab Emirates  AE'
+echo 'Vietnam               VN'
+echo 'Argentina             AR'
+echo 'Brazil                BR'
+echo 'Mexico                MX'
+
+read -p "Please Choose From the Above List: " WindscribeLocation
+
+     Windscribe_Connect
+     exit .1
+
+    elif [ $LocationResponse == "n" ] || [ $LocationResponse == "N" ]; then
+        echo "You Chose Nope "
+	Windscribe_Connect
+	exit .1
+
+    else
+        Windscribe_Choice
+        exit .1
+fi
+}
+
+#Connect to Windscribe VPN funciton
+Windscribe_Connect () {
+windscribe connect $WindscribeLocation
+}
+
+Windscribe_Initiate () {
+read -n1 -p "Would You Like to Connect to Windscribe VPN?: [y/N]: " InitiateResponse
+
+if [ $InitiateResponse == "y" ] || [ $InitiateResponse == "Y" ]; then
+	echo ''
+	Windscribe_Choice
+	exit .1
+
+		elif [ $InitiateResponse == "n" ] || [ $InitiateResponse == "N" ]; then
+	        echo "Finshed"
+		exit 1
+
+			else
+			echo ''
+			Windscribe_Choice
+			exit .1
+fi
+}
 
 #Print "Please Enter to Proceed"
-echo 'Please Enter to Proceed'
+echo 'Please Enter Account Password to Proceed'
 
 #Initiate admin access so that programs do not require further input of user account's password
 #Print "Thank You" 
-sudo echo 'Thank You'
+sudo echo "Let's Begin"
+
+#
+#echo $AdpaterConnected
+#echo $SSID
+#echo $BSSIDclean
+#echo $PSKclean
+#echo $WindscribeLocation
 
 #Check to see what connections are up
 #ie what adapters are currently working
-adapter=$(ip -o link show | awk '/state UP/{ gsub("\:",""); print $2}')
+#AdapterConnected=$(ip -o link show | awk '/state UP/{ gsub("\:",""); print $2}')
+
+#
+AdapterConnected=$(ip -o link show | awk '/state UP/{ gsub("\:",""); printf " %s",$2}')
+
+#AdapterConnected1=$(echo $AdapterConnected | awk '/ ,/{ gsub(
 
 #Print active adapter's name
-echo "Here Is My Connected Adapter's Name: "$adapter
+echo "Here Is My Connected Adapter's Name: "$AdapterConnected
 
 #Get SSID of currently connected wireless network
 SSID=$(iwgetid -r)
@@ -79,7 +208,7 @@ PSKclean=$(echo $PSKdirty | awk -F"=" '{print $2}')
 echo 'This Is The PSK: '$PSKclean
 
 #Disconnect from network
-nmcli d disconnect $adapter
+nmcli d disconnect $AdapterConnected
 
 #Stop Network-Manager Service
 sudo service network-manager stop
@@ -94,8 +223,8 @@ sleep 0.1
 #Randomize Me Kap'n! aka "RMK" works fine without initializing this command
 #macchanger start
 
-#Randomize Mac Address With Same Vendor
-sudo macchanger -a $adapter
+#Randomize Mac Address with same vendor
+sudo macchanger -a $AdapterConnected
 
 #Randomize Me Kap'n! aka "RMK" works fine without initializing this command
 #macchanger stop
@@ -108,7 +237,7 @@ sleep 0.8
 #Start Networking Service
 sudo service networking start
 echo 'Network Service Start'
-sleep 3
+sleep 4
 
 #Connect to previously connected wireless network
 nmcli d wifi connect $BSSIDclean password $PSKclean
@@ -116,9 +245,12 @@ nmcli d wifi connect $BSSIDclean password $PSKclean
 #Windscribe VPN connects
 #Will automatically connect to US-East if othe location is not spedicifed
 #Do not enable this option if you do not have a Windscribe VPN account
-#windscribe connecto
 
+#Starts the Windscribe VPN location choice function
+Windscribe_Initiate
 
+#Starts the windscribe VPN connection
+#Windscribe_Connect
 
 
 #Extra command that is not in use, it is nice to know if needing statistics display for wifi
