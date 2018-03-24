@@ -1,50 +1,195 @@
 #!/bin/bash
 
  
-   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-   #                                                                                                 #
-   #   R R R R R                                                                                     #
-   #   R        R                             d   0 0 0 0                 !!!             3 3 3 3    #
-   #   R        R                             d  0      00                ! !                    3   #
-   #   R        R                             d  0     0 0                ! !                    3   #
-   #   R R R R R         a                    d  0    0  0                ! !                    3   #
-   #   R   R       a a a a  n n n n    d d d d   0   0   0  m  m m  m m   ! !  z z z z z    3 3 3    #
-   #   R    R     a      a  nn     n  d       d  0  0    0  m m   m    m  !!!        z           3   #
-   #   R     R    a      a  n      n  d       d  0 0     0  m     m    m           z             3   #
-   #   R      R   a      a  n      n  d       d  00      0  m     m    m  !!!    z               3   #
-   #   R       R   a a a a  n      n   d d d d    0 0 0 0   m     m    m  !!!  z z z z z  3 3 3 3    #
-   #                                                                                                 # 
-   #                                                                                                 #
-   #      M             M   3 3 3 3         K       K                           N         N  !!!     #
-   #      MM           MM          3        K     K                         //  N N       N  ! !     #
-   #      M M         M M          3        K   K                          //   N  N      N  ! !     #
-   #      M  M       M  M          3        K K               a           //    N   N     N  ! !     #
-   #      M   M     M   M     3 3 3         KK          a a a a  p p p p        N    N    N  ! !     #
-   #      M    M   M    M          3        K K        a      a  p      p       N     N   N  !!!     #
-   #      M     M M     M          3        K   K      a      a  p      p       N      N  N          #
-   #      M      M      M          3        K     K    a      a  p      p       N       N N  !!!     #
-   #      M             M   3 3 3 3         K       K   a a a a  p p p p        N         N  !!!     #
-   #                                                             p                                   #
-   #                                                             p                                   # 
-   #                                                             p                                   #
-   #                                                             p                                   #
-   #                                                                                                 #
-   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+   #                                                                                                   #
+   #    R R R R R                                                                                      #
+   #    R        R                             d   0 0 0 0                 !!!             3 3 3 3     #
+   #    R        R                             d  0      00                ! !                    3    #
+   #    R        R                             d  0     0 0                ! !                    3    #
+   #    R R R R R         a                    d  0    0  0                ! !                    3    #
+   #    R   R       a a a a  n n n n    d d d d   0   0   0  m  m m  m m   ! !  z z z z z    3 3 3     #
+   #    R    R     a      a  nn     n  d       d  0  0    0  m m   m    m  !!!        z           3    #
+   #    R     R    a      a  n      n  d       d  0 0     0  m     m    m           z             3    #
+   #    R      R   a      a  n      n  d       d  00      0  m     m    m  !!!    z               3    #
+   #    R       R   a a a a  n      n   d d d d    0 0 0 0   m     m    m  !!!  z z z z z  3 3 3 3     #
+   #                                                                                                   # 
+   #                                                                                                   #
+   #       M             M   3 3 3 3         K       K                           N         N  !!!      #
+   #       MM           MM          3        K     K                         //  N N       N  ! !      #
+   #       M M         M M          3        K   K                          //   N  N      N  ! !      #
+   #       M  M       M  M          3        K K               a           //    N   N     N  ! !      #
+   #       M   M     M   M     3 3 3         KK          a a a a  p p p p        N    N    N  ! !      #
+   #       M    M   M    M          3        K K        a      a  p      p       N     N   N  !!!      #
+   #       M     M M     M          3        K   K      a      a  p      p       N      N  N           #
+   #       M      M      M          3        K     K    a      a  p      p       N       N N  !!!      #
+   #       M             M   3 3 3 3         K       K   a a a a  p p p p        N         N  !!!      #
+   #                                                              p                                    #
+   #                                                              p                                    # 
+   #                                                              p                                    #
+   #                                                              p                                    #
+   #                                                                                                   #
+   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 #Initialize default global variables
 AdpaterConnected='n/a'
+DefEthAdapterConnected='n/a'
+DefEthDisconnectedAdapter='n/a'
+DefWiFiConnectedAdapter='n/a'
+DefWiFiDisconnectedAdapter='n/a'
 SSID='n/a'
 BSSIDclean='n/a'
 PSKclean='n/a'
 WindscribeLocation=''
 
 #Initialize persistent global variables
-#
 #WindscribeLocation==
-#
 
-
+ 
 #Functions
+Def_Eth_Adapter_Connected () {
+
+DefEthAdapterConnected=$(ip -o link show | awk '/state UP/ && $2~/^et/ || $2~/^en/{ gsub("\:",""); print $2}')
+
+DefEthAdapterDisconnected=$(ip -o link show | awk '/state DOWN/ && $2~/^et/ || $2~/^en/{ gsub("\:",""); print $2}')
+
+echo "This is the Default Ethernet Adapter Connected: '$DefEthAdapterConnected'"
+
+echo "This is the Default Ethernet Adapter Disconnected: '$DefEthAdapterDisconnected'"
+
+}
+
+Def_WiFi_Adapter_Connected () {
+
+DefWiFiAdapterConnected=$(ip -o link show | awk '/state UP/ && $2~/^wl/ || $2~/^wl/{ gsub("\:",""); print $2}')
+
+DefWiFiAdapterDisconnected=$(ip -o link show | awk '/state DOWN/ && $2~/^wl/ || $2~/^wl/{ gsub("\:",""); print $2}')
+
+echo "This is the Default WiFi Adapter Connected: '$DefWiFiAdapterConnected'"
+
+echo "This is the Default WiFi Adapter Disconnected: '$DefWiFiAdapterDisconnected'"
+
+}
+
+Wireless_Network_Info () {
+
+#Get SSID of currently connected wireless network
+SSID=$(iwgetid -r)
+
+#Print "Here Is My Connected SSID"
+echo 'Here is my Connected SSID: '$SSID
+
+#Grabs the BSSID for the currently connected wireless network
+BSSIDdirty=$(sudo awk 'NR == 13' /etc/NetworkManager/system-connections/$SSID) #~/Programs/Scripts/bin/D2D7B1)
+
+#Prints "This Is the Dirty BSSID :" and BSSIDdirty variable
+#echo 'This Is the Dirty BSSID: '$BSSIDdirty
+
+#This is to clean up the dirty BSSID so that it is readable by future programs as input
+BSSIDclean=$(echo $BSSIDdirty | awk -F"=" '{print $2}' | awk -F";" '{print $1}')
+
+#Print "This Is The BSSID: " and BSSID variable
+echo 'This is the BSSID: '$BSSIDclean
+
+#Grabs the PSK ie password for the currently connected wireless network
+PSKdirty=$(sudo awk 'NR == 18' /etc/NetworkManager/system-connections/$SSID)
+
+#Print "This Is The Dirty PSK: " and PSKdirty variable
+#echo this is the PSKdirty $PSKdirty
+
+#This is to clean up the dirty PSK so that it is readable by future programs as input
+PSKclean=$(echo $PSKdirty | awk -F"=" '{print $2}')
+
+#Print "This Is The PSK: " and PSK variable
+echo 'This is the PSK: '$PSKclean
+
+}
+
+Disconnect_Wireless_Network () {
+
+#Disconnect from network
+nmcli d disconnect $AdapterConnected
+
+#Stops Network & Network-Manager 
+Stop_Networking
+
+}
+
+Connect_Wireless_Network () {
+
+Start_Networking
+
+if $PSKclean=='addr-gen-mode=stable-privacy'; then
+
+	#Connect to previously connected wireless network without Password enabled
+	nmcli d wifi connect $BSSIDclean
+
+		    #Connect to previously connected wireless network with Password enabled
+		else nmcli d wifi connect $BSSIDclean password $PSKclean
+
+fi
+}
+
+Stop_Networking () {
+
+#Stop Network-Manager Service
+sudo service network-manager stop
+echo 'Network-Manager Service Stop'
+sleep 0.1
+
+#Stop Network Service
+sudo service networking stop
+echo 'Network Service Stop'
+sleep 0.1
+
+}
+
+Start_Networking () {
+
+#Start Network-Manager Service
+sudo service network-manager start
+echo 'Network-Manager Service Start'
+sleep 0.8
+
+#Start Networking Service
+sudo service networking start
+echo 'Network Service Start'
+sleep 4
+
+}
+
+#Changes The Active Mac Address
+Mac_Address_Active_Changer () {
+
+#Randomize Me Kap'n! aka "RMK" works fine without initializing this command
+#macchanger start
+
+#Randomize Connected Wireless Mac Address with same vendor
+sudo macchanger -a $DefWifiConnectedAdapter
+
+#Randomize Connected Ethernet Adapter with same vendor
+sudo macchanger -a $DefEthConnectedAdapter
+
+#Randomize Me Kap'n! aka "RMK" works fine without initializing this command
+#macchanger stop
+
+}
+
+#Changes The Inactive Mac Address
+Mac_Address_Inactive_Changer () {
+
+#Randomize Me Kap'n! aka "RMK" works fine without initializing this command
+#macchanger start
+
+#Randomize Mac Address with same vendor
+sudo macchanger -a $DefWiFiDisconnectedAdapter
+
+sudo macchanger -a $DefEthDisconnectedAdapter
+
+#Randomize Me Kap'n! aka "RMK" works fine without initializing this command
+#macchanger stop
+
+}
 
 #Windscribe Choice Function
 Windscribe_Choice () {
@@ -111,25 +256,26 @@ echo 'Argentina             AR'
 echo 'Brazil                BR'
 echo 'Mexico                MX'
 
-read -p "Please Choose From the Above List: " WindscribeLocation
-
-     Windscribe_Connect
-     exit .1
-
-    elif [ $LocationResponse == "n" ] || [ $LocationResponse == "N" ]; then
-        echo "You Chose Nope "
+	read -p "Please Choose From the Above List: " WindscribeLocation
 	Windscribe_Connect
 	exit .1
 
-    else
-        Windscribe_Choice
-        exit .1
+		elif [ $LocationResponse == "n" ] || [ $LocationResponse == "N" ]; then
+		echo "You Chose Nope"
+		Windscribe_Connect
+		exit .1
+
+			else
+			Windscribe_Choice
+			exit .1
 fi
 }
 
 #Connect to Windscribe VPN funciton
 Windscribe_Connect () {
+
 windscribe connect $WindscribeLocation
+
 }
 
 Windscribe_Initiate () {
@@ -158,100 +304,20 @@ echo 'Please Enter Account Password to Proceed'
 #Print "Thank You" 
 sudo echo "Let's Begin"
 
-#
-#echo $AdpaterConnected
-#echo $SSID
-#echo $BSSIDclean
-#echo $PSKclean
-#echo $WindscribeLocation
+#Disconnect from Wireless Network
+Disconnect_Wireless_Network
 
-#Check to see what connections are up
-#ie what adapters are currently working
-#AdapterConnected=$(ip -o link show | awk '/state UP/{ gsub("\:",""); print $2}')
+#Changes the Active Adapter's Mac Address
+Mac_Address_Active_Changer
 
-#
-AdapterConnected=$(ip -o link show | awk '/state UP/{ gsub("\:",""); printf " %s",$2}')
+#Changes the Inactive Adapter's Mac Address
+Mac_Address_Inactive_Changer
 
-#AdapterConnected1=$(echo $AdapterConnected | awk '/ ,/{ gsub(
-
-#Print active adapter's name
-echo "Here Is My Connected Adapter's Name: "$AdapterConnected
-
-#Get SSID of currently connected wireless network
-SSID=$(iwgetid -r)
-
-#Print "Here Is My Connected SSID"
-echo 'Here Is My Connected SSID: '$SSID
-
-#Grabs the BSSID for the currently connected wireless network
-BSSIDdirty=$(sudo awk 'NR == 13' /etc/NetworkManager/system-connections/$SSID) #~/Programs/Scripts/bin/D2D7B1)
-
-#Prints "This Is the Dirty BSSID :" and BSSIDdirty variable
-#echo 'This Is the Dirty BSSID: '$BSSIDdirty
-
-#This is to clean up the dirty BSSID so that it is readable by future programs as input
-BSSIDclean=$(echo $BSSIDdirty | awk -F"=" '{print $2}' | awk -F";" '{print $1}')
-
-#Print "This Is The BSSID: " and BSSID variable
-echo 'This Is The BSSID: '$BSSIDclean
-
-#Grabs the PSK ie password for the currently connected wireless network
-PSKdirty=$(sudo awk 'NR == 18' /etc/NetworkManager/system-connections/$SSID)
-
-#Print "This Is The Dirty PSK: " and PSKdirty variable
-#echo this is the PSKdirty $PSKdirty
-
-#This is to clean up the dirty PSK so that it is readable by future programs as input
-PSKclean=$(echo $PSKdirty | awk -F"=" '{print $2}')
-
-#Print "This Is The PSK: " and PSK variable
-echo 'This Is The PSK: '$PSKclean
-
-#Disconnect from network
-nmcli d disconnect $AdapterConnected
-
-#Stop Network-Manager Service
-sudo service network-manager stop
-echo 'Network-Manager Service Stop'
-sleep 0.1
-
-#Stop Network Service
-sudo service networking stop
-echo 'Network Service Stop'
-sleep 0.1
-
-#Randomize Me Kap'n! aka "RMK" works fine without initializing this command
-#macchanger start
-
-#Randomize Mac Address with same vendor
-sudo macchanger -a $AdapterConnected
-
-#Randomize Me Kap'n! aka "RMK" works fine without initializing this command
-#macchanger stop
-
-#Start Network-Manager Service
-sudo service network-manager start
-echo 'Network-Manager Service Start'
-sleep 0.8
-
-#Start Networking Service
-sudo service networking start
-echo 'Network Service Start'
-sleep 4
-
-#Connect to previously connected wireless network
-nmcli d wifi connect $BSSIDclean password $PSKclean
+#Connect to Wireless Network
+Connect_Wireless_Network
 
 #Windscribe VPN connects
-#Will automatically connect to US-East if othe location is not spedicifed
+#Will automatically connect to US-East if other location is not spedicifed
 #Do not enable this option if you do not have a Windscribe VPN account
-
 #Starts the Windscribe VPN location choice function
 Windscribe_Initiate
-
-#Starts the windscribe VPN connection
-#Windscribe_Connect
-
-
-#Extra command that is not in use, it is nice to know if needing statistics display for wifi
-#nmcli -f in-use,ssid,bssid,signal,bars  dev wifi
