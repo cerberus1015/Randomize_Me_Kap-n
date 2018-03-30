@@ -40,7 +40,9 @@ DefWiFiAdapterConnected=''
 DefWiFiAdapterDisconnected=''
 SSID=''
 BSSIDclean=''
+BSSIDdirty=''
 PSKclean=''
+PSKdirty=''
 WindscribeLocation=''
 
 #Initialize persistent global variables
@@ -66,11 +68,11 @@ fi
 
 if  [ "$DefEthAdapterDisconnected" == '' ]; then
 
-	echo 'There is no Disconnected default Ethernet interface'
+	echo "There is no {Disconnected} default 'Ethernet interface'"
 
 		else
 
-		echo "This is the default Disconnected Ethernet interface: '$DefEthAdapterDisconnected'"
+		echo "This is the default {Disconnected} 'Ethernet interface': '$DefEthAdapterDisconnected'"
 
 fi
 
@@ -84,18 +86,18 @@ DefWiFiAdapterDisconnected=$(ip -o link show | awk '/state DOWN/ && $2~/^w/{ gsu
 
 if [ "$DefWiFiAdapterConnected" == '' ]; then
 
-	echo 'There is no default Connected WiFi interface'
+	echo "There is no default {Connected} 'WiFi interface'"
 
 		else
 
-		echo "This is the default Connected WiFi Adapter: '$DefWiFiAdapterConnected'"
+		echo "This is the default {Connected} 'WiFi Adapter': '$DefWiFiAdapterConnected'"
 
 fi
 
 
 if  [ "$DefWiFiAdapterDisconnected" == '' ]; then
 
-	echo 'There is no Disconnected default WiFi interface'
+	echo "There is no {Disconnected} default 'WiFi interface'"
 
 		else
 
@@ -110,38 +112,46 @@ Wireless_Network_Info () {
 #Get SSID of currently connected wireless network
 SSID=$(iwgetid -r)
 
-#Print "Here Is My Connected SSID"
-echo 'Here is my Connected SSID: '$SSID
+if [ "$SSID" == '' ]; then
 
-#Grabs the BSSID for the currently connected wireless network
-BSSIDdirty=$(sudo awk 'NR == 13' /etc/NetworkManager/system-connections/$SSID) #~/Programs/Scripts/bin/D2D7B1)
-
-#Prints "This Is the Dirty BSSID :" and BSSIDdirty variable
-#echo 'This Is the Dirty BSSID: '$BSSIDdirty
-
-#This is to clean up the dirty BSSID so that it is readable by future programs as input
-BSSIDclean=$(echo $BSSIDdirty | awk -F"=" '{print $2}' | awk -F";" '{print $1}')
-
-#Print "This Is The BSSID: " and BSSID variable
-echo 'This is the BSSID: '$BSSIDclean
-
-#Grabs the PSK ie password for the currently connected wireless network
-PSKdirty=$(sudo awk 'NR == 18' /etc/NetworkManager/system-connections/$SSID)
-
-#Print "This Is The Dirty PSK: " and PSKdirty variable
-#echo this is the PSKdirty $PSKdirty
-
-#This is to clean up the dirty PSK so that it is readable by future programs as input
-PSKclean=$(echo $PSKdirty | awk -F"=" '{print $2}')
-
-if [ "$PSKdirty" == 'addr-gen-mode=stable-privacy' ]; then
-
-	echo 'There is no WiFi password' 
+	echo 'There is no Connected WiFi Access Point'
 
 		else
+
+		#Print "Here Is My Connected SSID"
+		echo 'Here is my Connected SSID: '$SSID
+		
+		#Grabs the BSSID for the currently connected wireless network
+		BSSIDdirty=$(sudo awk 'NR == 13' /etc/NetworkManager/system-connections/$SSID) #~/Programs/Scripts/bin/D2D7B1)
+
+		#Prints "This Is the Dirty BSSID :" and BSSIDdirty variable
+		#echo 'This Is the Dirty BSSID: '$BSSIDdirty
+
+		#This is to clean up the dirty BSSID so that it is readable by future programs as input
+		BSSIDclean=$(echo $BSSIDdirty | awk -F"=" '{print $2}' | awk -F";" '{print $1}')
+
+		#Print "This Is The BSSID: " and BSSID variable
+		echo 'This is the BSSID: '$BSSIDclean
+
+		#Grabs the PSK ie password for the currently connected wireless network
+		PSKdirty=$(sudo awk 'NR == 18' /etc/NetworkManager/system-connections/$SSID)
+
+		#Print "This Is The Dirty PSK: " and PSKdirty variable
+		#echo this is the PSKdirty $PSKdirty
+
+		#This is to clean up the dirty PSK so that it is readable by future programs as input
+		PSKclean=$(echo $PSKdirty | awk -F"=" '{print $2}')
+
+			if [ "$PSKdirty" == 'addr-gen-mode=stable-privacy' ] || "$PSKdirty" == '' ]; then
+
+			echo 'There is no WiFi password' 
+
+					else
 	
-		#Print "This Is The PSK: " and PSK variable
-		echo 'This is the WiFi password (PSK): '$PSKclean
+					#Print "This Is The PSK: " and PSK variable
+					echo 'This is the WiFi password (PSK): '$PSKclean
+
+			fi
 
 fi
 
@@ -402,51 +412,225 @@ read -n1 -p "Would You Like to Connect to Windscribe VPN?: [y/N]: " InitiateResp
 if [ $InitiateResponse == "y" ] || [ $InitiateResponse == "Y" ]; then
 	echo ''
 	Windscribe_Choice
-	exit .1
+	#exit .1
 
 		elif [ $InitiateResponse == "n" ] || [ $InitiateResponse == "N" ]; then
 	        echo ''
-		echo "Finshed"
-		exit 1
+		echo "Finished"
+		#exit 1
 
 			else
 			echo ''
 			Windscribe_Choice
-			exit .1
+			#exit .1
 fi
 }
+
+Program_Choices () {
+
+echo "--------------------------------------------------"
+echo "                                                  "
+echo "             ~ Here Are Your Choices ~            "
+echo "                                                  "
+echo "  Randomize   'All'    Interface's w/h VPN:  [1]  "  
+echo "  Randomize   'All'    Interface's w/o VPN:  [2]  "  
+echo "  Randomize  'Active'  Interface's w/h VPN:  [3]  "  
+echo "  Randomize  'Active'  Interface's w/o VPN:  [4]  "  
+echo "  Randomize 'Inactive' Interface's w/h VPN:  [5]  "  
+echo "  Randomize 'Inactive' Interface's w/o VPN:  [6]  "  
+echo "  Exit the Program                        : [e/E] "
+echo "                                                  " 
+echo "--------------------------------------------------"
+read -n1 -p "Which Option Would You Like to Choose?: " NumberResponse #response is local variable
+
+if [ $NumberResponse == "1" ]; then
+	echo ''
+	echo "-----------"
+	echo "Let's Begin"
+	echo "-----------"
+	
+	#Disconnect from Wireless Network
+	Disconnect_Wireless_Network
+
+	#Changes the Active Adapter's Mac Address
+	Mac_Address_Active_Changer
+
+	#Changes the Inactive Adapter's Mac Address
+	Mac_Address_Inactive_Changer
+
+	#Connect to Wireless Network
+	Connect_Wireless_Network
+
+	#Starts the Windscribe VPN location choice function
+	Windscribe_Initiate
+
+	#Return to Start
+	Program_Choices
+
+		elif [ $NumberResponse == "2" ]; then
+		echo ''
+		echo "-----------"
+		echo "Let's Begin"
+		echo "-----------"
+
+		#Disconnect from Wireless Network
+		Disconnect_Wireless_Network
+
+		#Changes the Active Adapter's Mac Address
+		Mac_Address_Active_Changer
+
+		#Changes the Inactive Adapter's Mac Address
+		Mac_Address_Inactive_Changer
+
+		#Connect to Wireless Network
+		Connect_Wireless_Network
+
+		#Return to Start
+		Program_Choices
+		
+			elif [ $NumberResponse == "3" ]; then
+			echo ''
+			echo "-----------"
+			echo "Let's Begin"
+			echo "-----------"
+
+			#Disconnect from Wireless Network
+			Disconnect_Wireless_Network
+
+			#Changes the Active Adapter's Mac Address
+			Mac_Address_Active_Changer
+
+			#Connect to Wireless Network
+			Connect_Wireless_Network
+
+			#Starts the Windscribe VPN location choice function
+			Windscribe_Initiate
+
+			#Return to Start
+			Program_Choices			
+
+				elif [ $NumberResponse == "4" ]; then
+				echo ''
+				echo "-----------"
+				echo "Let's Begin"
+				echo "-----------"
+
+				#Disconnect from Wireless Network
+				Disconnect_Wireless_Network
+	
+				#Changes the Active Adapter's Mac Address
+				Mac_Address_Active_Changer
+
+				#Connect to Wireless Network
+				Connect_Wireless_Network
+
+				#Return to Start
+				Program_Choices
+
+					elif [ $NumberResponse == "5" ]; then
+					echo ''
+					echo "-----------"
+					echo "Let's Begin"
+					echo "-----------"
+					
+					#Disconnect from Wireless Network
+					Disconnect_Wireless_Network
+			
+					#Changes the Inactive Adapter's Mac Address
+					Mac_Address_Inactive_Changer
+
+					#Connect to Wireless Network
+					Connect_Wireless_Network
+
+					#Starts the Windscribe VPN location choice function
+					Windscribe_Initiate
+	
+					#Return to Start
+					Program_Choices					
+
+
+						elif [ $NumberResponse == "6" ]; then
+						echo ''						
+						echo "-----------"
+						echo "Let's Begin"
+						echo "-----------"
+
+						#Disconnect from Wireless Network
+						Disconnect_Wireless_Network
+
+						#Changes the Inactive Adapter's Mac Address
+						Mac_Address_Inactive_Changer
+
+						#Connect to Wireless Network
+						Connect_Wireless_Network
+	
+						#Return to Start
+						Program_Choices								
+
+							elif [ $NumberResponse == "e" ] || [ $NumberResponse == "E" ]; then
+							echo ''							
+							echo "-------"
+							echo "Goodbye"
+							echo "-------"
+
+							#Exit Randomize Me Kap'n
+							exit 1
+	
+								else #Return to Start w/h Input Instruction
+								echo ''								
+								echo "------------------------------"
+								echo "Please Choose a Correct Input!"
+								echo "------------------------------"
+								Program_Choices
+
+fi
+}
+
+#What's My Name???
+echo ''
+echo "# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #"
+echo "#                                                                                                     #"
+echo "#                                                                                                     #"
+echo "#     R R R R R                                                                                       #"
+echo "#     R        R                             d   0 0 0 0                 !!!             3 3 3 3      #"
+echo "#     R        R                             d  0      00                ! !                    3     #"
+echo "#     R        R                             d  0     0 0                ! !                    3     #"
+echo "#     R R R R R         a                    d  0    0  0                ! !                    3     #"
+echo "#     R   R       a a a a  n n n n    d d d d   0   0   0  m  m m  m m   ! !  z z z z z    3 3 3      #"
+echo "#     R    R     a      a  nn     n  d       d  0  0    0  m m   m    m  !!!        z           3     #"
+echo "#     R     R    a      a  n      n  d       d  0 0     0  m     m    m           z             3     #"
+echo "#     R      R   a      a  n      n  d       d  00      0  m     m    m  !!!    z               3     #"
+echo "#     R       R   a a a a  n      n   d d d d    0 0 0 0   m     m    m  !!!  z z z z z  3 3 3 3      #"
+echo "#                                                                                                     #"
+echo "#                                                                                                     #"
+echo "#        M             M   3 3 3 3         K       K                           N         N  !!!       #"
+echo "#        MM           MM          3        K     K                         //  N N       N  ! !       #"
+echo "#        M M         M M          3        K   K                          //   N  N      N  ! !       #"
+echo "#        M  M       M  M          3        K K               a           //    N   N     N  ! !       #"
+echo "#        M   M     M   M     3 3 3         KK          a a a a  p p p p        N    N    N  ! !       #"
+echo "#        M    M   M    M          3        K K        a      a  p      p       N     N   N  !!!       #"
+echo "#        M     M M     M          3        K   K      a      a  p      p       N      N  N            #"
+echo "#        M      M      M          3        K     K    a      a  p      p       N       N N  !!!       #"
+echo "#        M             M   3 3 3 3         K       K   a a a a  p p p p        N         N  !!!       #"
+echo "#                                                               p                                     #"
+echo "#                                                               p                                     #"
+echo "#                                                               p                                     #"
+echo "#                                                               p                                     #"
+echo "#                                                                                                     #"
+echo "# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #"
+echo ''
 
 #Print "Please Enter to Proceed"
 echo 'Please Enter Account Password to Proceed'
 
 #Initiate admin access so that programs do not require further input of user account's password
-#Print "Thank You" 
-sudo echo "Let's Begin"
+#Print "Let's Begin" 
+sudo echo "--------------------------------------------------"
+echo      "                    Let's Begin                   "
 
+#Start the User Input Prompts
+Program_Choices
 
-#Def_WiFi_Adapter_Connected
-
-#Def_Eth_Adapter_Connected
-
-#Wireless_Network_Info
-
-#Disconnect from Wireless Network
-Disconnect_Wireless_Network
-
-#Changes the Active Adapter's Mac Address
-Mac_Address_Active_Changer
-
-#Changes the Inactive Adapter's Mac Address
-Mac_Address_Inactive_Changer
-
-#Connect to Wireless Network
-Connect_Wireless_Network
-
-#Windscribe VPN connects
-#Will automatically connect to US-East if other location is not spedicifed
-#Do not enable this option if you do not have a Windscribe VPN account
-#Starts the Windscribe VPN location choice function
-Windscribe_Initiate
 
 
 
