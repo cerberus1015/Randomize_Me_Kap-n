@@ -10,14 +10,15 @@
 - In order for this program i.e. bash file to work, "RMK" needs to be stored in the "/bin" directory i.e. folder on your computer. This requires admin privileges i.e. "sudo' to move files to your "/bin" directory. I personally added a new "/bin" directory to my home folder and called that from my bash config files so I can access this program from terminal i.e. command line wherever im at on my computer.
 
 - In order to set up your own "/bin" directory anywhere on your computer, you should follow these instructions as stated by user: souravc. 
+
 { Just create a folder ~/bin. Add the following line in your ~/.bashrc,
 
-export PATH=/home/$USER/bin:$PATH
+  export PATH=/home/$USER/bin:$PATH
 
-Source ~/.bashrc from terminal as,
+  Source ~/.bashrc from terminal as,
 
-. ~/.bashrc
+  . ~/.bashrc
 
-Put files with execution permission inside ~/bin.
+  Put files with execution permission inside ~/bin.
 
-https://askubuntu.com/questions/406491/how-to-create-and-link-a-bin-folder-to-contain-executables?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa }
+  https://askubuntu.com/questions/406491/how-to-create-and-link-a-bin-folder-to-contain-executables?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa }
