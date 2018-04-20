@@ -39,6 +39,12 @@ DefEthAdapterDisconnected=''
 DefWiFiAdapterConnected=''
 DefWiFiAdapterDisconnected=''
 SSID=''
+#SSID1=''
+#SSID2=''
+#SSID3=''
+#SSID4=''
+#SSID5=''
+#SSIDPathway=''
 BSSIDclean=''
 BSSIDdirty=''
 PSKclean=''
@@ -57,22 +63,22 @@ DefEthAdapterDisconnected=$(ip -o link show | awk '/state DOWN/ && $2~/^e/{ gsub
 
 if [ "$DefEthAdapterConnected" == '' ]; then
 
-	echo 'There is no Connected default Ethernet interface'
+	echo "There is no {Connected} default 'Ethernet interface'"
 
 		else
 
-		echo "This is the default Connected Ethernet interface: '$DefEthAdapterConnected'"
+		echo "This is the default {Connected} Ethernet interface: {$DefEthAdapterConnected}"
 
 fi
 
 
 if  [ "$DefEthAdapterDisconnected" == '' ]; then
 
-	echo "There is no {Disconnected} default 'Ethernet interface'"
+	echo "There is no {Disconnected} default 'Ethernet Interface'"
 
 		else
 
-		echo "This is the default {Disconnected} 'Ethernet interface': '$DefEthAdapterDisconnected'"
+		echo "This is the default {Disconnected} 'Ethernet Interface': {$DefEthAdapterDisconnected}"
 
 fi
 
@@ -86,22 +92,22 @@ DefWiFiAdapterDisconnected=$(ip -o link show | awk '/state DOWN/ && $2~/^w/{ gsu
 
 if [ "$DefWiFiAdapterConnected" == '' ]; then
 
-	echo "There is no default {Connected} 'WiFi interface'"
+	echo "There is no {Connected} default 'WiFi Interface'"
 
 		else
 
-		echo "This is the default {Connected} 'WiFi Adapter': '$DefWiFiAdapterConnected'"
+		echo "This is the default {Connected} 'WiFi Interface': {$DefWiFiAdapterConnected}"
 
 fi
 
 
 if  [ "$DefWiFiAdapterDisconnected" == '' ]; then
 
-	echo "There is no {Disconnected} default 'WiFi interface'"
+	echo "There is no {Disconnected} default 'WiFi Interface'"
 
 		else
 
-		echo "This is the default Disconnected WiFi interface: '$DefWiFiAdapterDisconnected'"
+		echo "This is the default {Disconnected} 'WiFi Interface': {$DefWiFiAdapterDisconnected}"
 
 fi
 
@@ -112,44 +118,148 @@ Wireless_Network_Info () {
 #Get SSID of currently connected wireless network
 SSID=$(iwgetid -r)
 
+#SSID1=$(iwgetid -r | awk '{print $1}')
+
+#if [ "$SSID1" != '' ]; then
+#
+#SSID="$SSID1"
+#
+#SSIDPathway=$(echo "/etc/NetworkManager/system-connections/$SSID1")
+#
+#echo 'this is SSIDPathway 1: '"$SSIDPathway"
+#
+#echo 'this is SSID: '"$SSID"
+#
+#echo "$SSID"
+#
+#	else
+#
+#	echo 'SSID is finished'
+#
+#	fi
+#
+#		SSID2=$(iwgetid -r | awk '{print $2}')
+#
+#		if [ "$SSID2" != '' ]; then
+#
+#		SSID=$(echo "$SSID $SSID2")
+#
+#		SSIDPathway=$(echo "/etc/NetworkManager/system-connections/$SSID1 $SSID2")
+#
+#		echo 'this is SSIDPathway 2: '"$SSIDPathway"
+#
+#		echo 'this is SSID: '"$SSID"
+#
+#			else
+#
+#			echo 'SSID is finished'
+#
+#			fi
+#			
+#				SSID3=$(iwgetid -r | awk '{print $3}')
+#
+#				if [ "$SSID3" != '' ]; then
+#
+#				SSID=$(echo "$SSID $SSID2 $SSID3")
+#
+#				SSIDPathway=$(echo "/etc/NetworkManager/system-connections/$SSID1 $SSID2 $SSID3")
+#
+#				echo 'this is SSIDPathway 3: '"$SSIDPathway"
+#
+#				echo 'this is SSID: '"$SSID"
+#
+#					else
+#
+#					echo 'SSID is finished'
+#
+#					fi
+#
+#						SSID4=$(iwgetid -r | awk '{print $4}')
+#
+#						if [ "$SSID4" != '' ]; then
+#
+#						SSID=$(echo "$SSID $SSID2 $SSID3 $SSID4")
+#
+#						SSIDPathway=$(echo /etc/NetworkManager/system-connections/$SSID1\ $SSID2\ $SSID3\ $SSID4)
+#
+#						echo 'this is SSIDPathway 4: '"$SSIDPathway"
+#
+#						echo 'this is SSID: '"$SSID"
+#
+#							else
+#	
+#							echo 'SSID is finished'
+#
+#							fi
+#
+#								SSID5=$(iwgetid -r | awk '{print $5}')
+#
+#								if [ "$SSID5" != '' ]; then
+#
+#								SSID=$(echo "$SSID\ $SSID2\ $SSID3\ $SSID4\ $SSID5")
+#								
+#								SSIDPathway=$(echo "/etc/NetworkManager/system-connections/$SSID1 $SSID2 $#\SSID3 $SSID4 $SSID5")
+#
+#								echo 'this is SSIDPathway 5: '"$SSIDPathway"
+#
+#								echo 'this is SSID: '"$SSID"
+#
+#									else
+#
+#									echo 'SSID is finished'
+#
+#									fi
+#
 if [ "$SSID" == '' ]; then
 
-	echo 'There is no Connected WiFi Access Point'
+	echo 'There is no {Connected} WiFi Access Point'
 
 		else
 
 		#Print "Here Is My Connected SSID"
-		echo 'Here is my Connected SSID: '$SSID
-		
+		echo ' --> Here is my Connected SSID: '"$SSID"
+
 		#Grabs the BSSID for the currently connected wireless network
-		BSSIDdirty=$(sudo awk 'NR == 13' /etc/NetworkManager/system-connections/$SSID) #~/Programs/Scripts/bin/D2D7B1)
+		BSSIDdirty=$(sudo awk 'NR == 13' "/etc/NetworkManager/system-connections/""$SSID")
 
-		#Prints "This Is the Dirty BSSID :" and BSSIDdirty variable
-		#echo 'This Is the Dirty BSSID: '$BSSIDdirty
+		if [ "$BSSIDdirty" == "[ipv4]" ]; then
 
-		#This is to clean up the dirty BSSID so that it is readable by future programs as input
-		BSSIDclean=$(echo $BSSIDdirty | awk -F"=" '{print $2}' | awk -F";" '{print $1}')
+			BSSIDclean="$SSID"
+			
+				else
+				#Prints "This Is the Dirty BSSID :" and BSSIDdirty variable
+				#echo 'This Is the Dirty BSSID: '$BSSIDdirty
+
+				#This is to clean up the dirty BSSID so that it is readable by future programs as input
+				BSSIDclean=$(echo "$BSSIDdirty" | awk -F"=" '{print $2}' | awk -F";" '{print $1}')
+		
+		fi
 
 		#Print "This Is The BSSID: " and BSSID variable
-		echo 'This is the BSSID: '$BSSIDclean
+		echo ' --> This is the BSSID: '"$BSSIDclean"
+
+		echo 'This is: '"$SSID"
+
+		#
 
 		#Grabs the PSK ie password for the currently connected wireless network
-		PSKdirty=$(sudo awk 'NR == 18' /etc/NetworkManager/system-connections/$SSID)
+		PSKdirty=$(sudo awk 'NR == 18' "/etc/NetworkManager/system-connections/""$SSID")
 
 		#Print "This Is The Dirty PSK: " and PSKdirty variable
 		#echo this is the PSKdirty $PSKdirty
 
 		#This is to clean up the dirty PSK so that it is readable by future programs as input
-		PSKclean=$(echo $PSKdirty | awk -F"=" '{print $2}')
+		PSKclean=$(echo "$PSKdirty" | awk -F"=" '{print $2}')
 
-			if [ "$PSKdirty" == 'addr-gen-mode=stable-privacy' ] || "$PSKdirty" == '' ]; then
-
+			if [ "$PSKdirty" == 'addr-gen-mode=stable-privacy' ] || [ "$PSKdirty" == '' ]; then
+			
+			echo '-------------------------'
 			echo 'There is no WiFi password' 
-
+			echo '-------------------------'
 					else
 	
 					#Print "This Is The PSK: " and PSK variable
-					echo 'This is the WiFi password (PSK): '$PSKclean
+					echo 'This is the WiFi password (PSK): '"$PSKclean"
 
 			fi
 
@@ -166,7 +276,7 @@ Def_Eth_Adapter_Connected
 Wireless_Network_Info
 
 #Disconnect from wireless network
-nmcli d disconnect $DefWiFiAdapterConnected
+nmcli d disconnect "$DefWiFiAdapterConnected"
 
 #Stops Network & Network-Manager 
 Stop_Networking
@@ -181,27 +291,31 @@ Start_Networking
 
 #DefWiFiConnectedAdapter=$(ip -o link show | awk '/state UP/ && $2~/^w/{ gsub("\:",""); print $2}'); then
 
-		echo 'This is the currently connected default WiFi adapter: '$DefWiFiAdapterConnected 
+		echo 'This is the currently connected default WiFi adapter: '"$DefWiFiAdapterConnected" 
 
-		#if [ "$PSKclean" == 'addr-gen-mode=stable-privacy '| '$2~/^addr-gen-mode=/; print $2']; then
+		#if [ "$PSKclean" == 'addr-gen-mode=stable-privacy ' || '$2~/^addr-gen-mode=/; print $2']; then
 
-		if [ "$PSKdirty" == 'addr-gen-mode=stable-privacy' ]; then
+		if [ "$PSKdirty" == "addr-gen-mode=stable-privacy" ]; then
 		
+			#Milestone
+			echo "If Statement -> This is BSSIDclean: ""$BSSIDclean"
+
 			#Connect to previously connected wireless network without Password enabled
-			nmcli d wifi connect $BSSIDclean
+			nmcli d wifi connect "$BSSIDclean"
 
 				else
+				
+				#Milestone
+				echo "Else Statement -> This is BSSIDclean: ""$BSSIDclean"
 
 				#Connect to previously connected wireless network with Password enabled
-				nmcli d wifi connect $BSSIDclean password $PSKclean
+				nmcli d wifi connect "$BSSIDclean" password "$PSKclean"
 
 fi
 
-#if DefEthAdapterConnected=$(ip -o link show | awk '/state UP/ && $2~/^e/{ gsub("\:",""); print $2}'); then
+#Delete Unneded New Connection created by reconnecting in "System-Connections"
+sudo rm "/etc/NetworkManager/system-connections/""$SSID"" 1"
 
-#		echo $DefEthAdapterConnected 'test 2'
-
-#fi
 }
 
 Stop_Networking () {
@@ -240,33 +354,34 @@ Mac_Address_Active_Changer () {
 
 if [ "$DefWiFiAdapterConnected" == '' ]; then
 
+	echo '--------------------------------------------'	
 	echo 'There is no connected default WiFi interface'
+	echo '--------------------------------------------'
 
 		else
 
 		#Randomize Connected Wireless Mac Address with same vendor
-		sudo macchanger -a $DefWiFiAdapterConnected
+		sudo macchanger -a "$DefWiFiAdapterConnected"
 
-		echo "The connected default WiFi interface's mac address has been changed: "$DefWiFiAdapterConnected
+		echo "The connected default WiFi interface's mac address has been changed: ""$DefWiFiAdapterConnected"
 
 fi
 
 
 if [ "$DefEthAdapterConnected" == '' ]; then 
 
+	echo '------------------------------------------------'
 	echo 'There is no connected default Ethernet interface'
-	
+	echo '------------------------------------------------'
+
 		else
 
 		#Randomize Connected Ethernet Mac Address with same vendor
-		sudo macchanger -a $DefEthAdapterConnected
+		sudo macchanger -a "$DefEthAdapterConnected"
 
-		echo "The connected default Ethernet interface's mac address has been changed: "$DefEthAdapterConnected
+		echo "The connected default Ethernet interface's mac address has been changed: ""$DefEthAdapterConnected"
 
 fi
-
-#Randomize Me Kap'n! aka "RMK" works fine without initializing this command
-#macchanger stop
 
 }
 
@@ -278,43 +393,34 @@ Mac_Address_Inactive_Changer () {
 
 if [ "$DefWiFiAdapterDisconnected" == '' ]; then 
 
+	echo '-----------------------------------------------'
 	echo 'There is no disconnected default WiFi interface'
+	echo '-----------------------------------------------'
 
 		else
 
 		#Randomize Connected Wireless Mac Address with same vendor
-		sudo macchanger -a $DefWiFiAdapterDisconnected
+		sudo macchanger -a "$DefWiFiAdapterDisconnected"
 
-		echo "The disconnected default WiFi interface's mac address has been changed: "$DefWiFiAdapterDisconnected
+		echo "The disconnected default WiFi interface's mac address has been changed: ""$DefWiFiAdapterDisconnected"
 
 fi
 
 
 if [ "$DefEthAdapterDisconnected" == '' ]; then 
 
+	echo '---------------------------------------------------'
 	echo 'There is no disconnected default Ethernet interface'
-	
+	echo '---------------------------------------------------'
+
 		else
 
 		#Randomize Connected Ethernet Mac Address with same vendor
-		sudo macchanger -a $DefEthAdapterDisconnected
+		sudo macchanger -a "$DefEthAdapterDisconnected"
 
-		echo "The disconnected default Ethernet interface's mac address has been changed: "$DefEthAdapterDisconnected
+		echo "The disconnected default Ethernet interface's mac address has been changed: ""$DefEthAdapterDisconnected"
 
 fi
-
-#Randomize Mac Address with same vendor
-#sudo macchanger -a $DefWiFiAdapterDisconnected
-
-#echo $DefWiFiAdapterDisconnected 'wifi disc'
-
-#Randomize Mac Address with same vendor
-#sudo macchanger -a $DefEthAdapterDisconnected
-
-#echo $DefEthAdapterDisconnected 'eth disc'
-
-#Randomize Me Kap'n! aka "RMK" works fine without initializing this command
-#macchanger stop
 
 }
 
@@ -323,7 +429,8 @@ Windscribe_Choice () {
 
 read -n1 -p "Would You Like to Input a Location? [y/N]: " LocationResponse #response is local variable
 echo ''
-if [ $LocationResponse == "y" ] || [ $LocationResponse == "Y" ]; then
+if [ "$LocationResponse" == "y" ] || [ "$LocationResponse" == "Y" ]; then
+
 echo 'Location              Short Name' 
 echo 'US Central            US-C'
 echo 'US East               US'
@@ -385,18 +492,17 @@ echo 'Mexico                MX'
 
 	read -p "Please Choose From the Above List: " WindscribeLocation
 	Windscribe_Connect
-	exit .1
 
-		elif [ $LocationResponse == "n" ] || [ $LocationResponse == "N" ]; then
+		elif [ "$LocationResponse" == "n" ] || [ "$LocationResponse" == "N" ]; then
 		echo "You Chose Nope"
 		Windscribe_Connect
-		exit .1
-
+		
 			else
 			Windscribe_Choice
 			echo ''
-			exit .1
+
 fi
+
 }
 
 #Connect to Windscribe VPN funciton
@@ -409,41 +515,115 @@ windscribe connect $WindscribeLocation
 Windscribe_Initiate () {
 read -n1 -p "Would You Like to Connect to Windscribe VPN?: [y/N]: " InitiateResponse
 
-if [ $InitiateResponse == "y" ] || [ $InitiateResponse == "Y" ]; then
+if [ "$InitiateResponse" == "y" ] || [ "$InitiateResponse" == "Y" ]; then
 	echo ''
 	Windscribe_Choice
-	#exit .1
-
-		elif [ $InitiateResponse == "n" ] || [ $InitiateResponse == "N" ]; then
+	
+		elif [ "$InitiateResponse" == "n" ] || [ "$InitiateResponse" == "N" ]; then
 	        echo ''
 		echo "Finished"
-		#exit 1
-
+		
 			else
 			echo ''
 			Windscribe_Choice
-			#exit .1
+			
 fi
+
+}
+
+Macchanger_Installed () {
+MacchangerCheck=$(apt-cache policy macchanger | awk 'FNR == 2 {print $2}')
+
+if [ "$MacchangerCheck" == "(none)" ]; then
+
+       echo "-------------------------------------------------------------" 
+read -n1 -p "   You need to install 'Macchanger' to proceed: [y/N]: " InitiateResponse
+
+	if [ "$InitiateResponse" == "y" ] || [ "$InitiateResponse" == "Y" ]; then
+		echo ''
+		echo '-----------------'
+		echo 'Beginning Install'
+		echo '-----------------'
+		sudo apt-get update
+		sudo apt-get install macchanger 
+		
+			elif [ "$InitiateResponse" == "n" ] || [ "$InitiateResponse" == "N" ]; then
+		        echo ''
+			echo '------'
+			echo "Goodye"
+			echo '------'
+			exit 1
+
+				else #Return to Start w/h Input Instruction
+				echo ''								
+				echo "------------------------------"
+				echo "Please Choose a Correct Input!"
+				echo "------------------------------"
+				Macchanger_Installed
+	fi
+
+else
+
+echo "         ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~        "
+echo "         ~ Macchanger is already installed ~        "
+echo "         ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~        "
+echo ''
+
+fi
+
+}
+
+Random_Host_Name () {
+
+cp -n /etc/hosts{,.old}
+idomainname=$(domainname -i)
+fdomainname=$(domainname -f)
+newhn=$(cat /dev/urandom | tr -dc 'a-z' | head -c10)
+echo $newhn > /etc/hostname
+mv /etc/hosts /etc/hosts.old
+
+echo "127.0.0.1 localhost" > /etc/hosts
+echo "$idomainname  $fdomainname    $newhn" >> /etc/hosts
+echo "# The following lines are desirable for IPv6 capable hosts" >> /etc/hosts
+echo "::1     localhost ip6-localhost ip6-loopback" >> /etc/hosts
+echo "ff02::1 ip6-allnodes" >> /etc/hosts
+echo "ff02::2 ip6-allrouters" >> /etc/hosts
+
+service hostname.sh stop
+sleep 1
+service hostname.sh start
+
+service networking stop
+sleep 1
+service networking start
+
+service network-manager stop
+sleep 1
+service network-manager start
+
+xhost +$newhn
+
 }
 
 Program_Choices () {
 
-echo "--------------------------------------------------"
-echo "                                                  "
-echo "             ~ Here Are Your Choices ~            "
-echo "                                                  "
-echo "  Randomize   'All'    Interface's w/h VPN:  [1]  "  
-echo "  Randomize   'All'    Interface's w/o VPN:  [2]  "  
-echo "  Randomize  'Active'  Interface's w/h VPN:  [3]  "  
-echo "  Randomize  'Active'  Interface's w/o VPN:  [4]  "  
-echo "  Randomize 'Inactive' Interface's w/h VPN:  [5]  "  
-echo "  Randomize 'Inactive' Interface's w/o VPN:  [6]  "  
-echo "  Exit the Program                        : [e/E] "
-echo "                                                  " 
-echo "--------------------------------------------------"
+echo "----------------------------------------------------"
+echo "                                                    "
+echo "              ~ Here Are Your Choices ~             "
+echo "                                                    "
+echo "   Randomize   'All'    Interface's w/h VPN:  [1]   "  
+echo "   Randomize   'All'    Interface's w/o VPN:  [2]   "  
+echo "   Randomize  'Active'  Interface's w/h VPN:  [3]   "  
+echo "   Randomize  'Active'  Interface's w/o VPN:  [4]   "  
+echo "   Randomize 'Inactive' Interface's w/h VPN:  [5]   "  
+echo "   Randomize 'Inactive' Interface's w/o VPN:  [6]   "
+echo "   Randomize  'Active'  Computer Host Name :  [7]   "  
+echo "   Exit the Program                        : [e/E]  "
+echo "                                                    " 
+echo "----------------------------------------------------"
 read -n1 -p "Which Option Would You Like to Choose?: " NumberResponse #response is local variable
 
-if [ $NumberResponse == "1" ]; then
+if [ "$NumberResponse" == "1" ]; then
 	echo ''
 	echo "-----------"
 	echo "Let's Begin"
@@ -467,7 +647,7 @@ if [ $NumberResponse == "1" ]; then
 	#Return to Start
 	Program_Choices
 
-		elif [ $NumberResponse == "2" ]; then
+		elif [ "$NumberResponse" == "2" ]; then
 		echo ''
 		echo "-----------"
 		echo "Let's Begin"
@@ -488,7 +668,7 @@ if [ $NumberResponse == "1" ]; then
 		#Return to Start
 		Program_Choices
 		
-			elif [ $NumberResponse == "3" ]; then
+			elif [ "$NumberResponse" == "3" ]; then
 			echo ''
 			echo "-----------"
 			echo "Let's Begin"
@@ -509,7 +689,7 @@ if [ $NumberResponse == "1" ]; then
 			#Return to Start
 			Program_Choices			
 
-				elif [ $NumberResponse == "4" ]; then
+				elif [ "$NumberResponse" == "4" ]; then
 				echo ''
 				echo "-----------"
 				echo "Let's Begin"
@@ -527,20 +707,20 @@ if [ $NumberResponse == "1" ]; then
 				#Return to Start
 				Program_Choices
 
-					elif [ $NumberResponse == "5" ]; then
+					elif [ "$NumberResponse" == "5" ]; then
 					echo ''
 					echo "-----------"
 					echo "Let's Begin"
 					echo "-----------"
 					
-					#Disconnect from Wireless Network
-					Disconnect_Wireless_Network
+					#Finds out what WiFi Interfaces are Active & Inactive
+					Def_WiFi_Adapter_Connected
+
+					#FInds out what Ethernet Interfaces are Active & Inactive
+					Def_Eth_Adapter_Connected
 			
 					#Changes the Inactive Adapter's Mac Address
 					Mac_Address_Inactive_Changer
-
-					#Connect to Wireless Network
-					Connect_Wireless_Network
 
 					#Starts the Windscribe VPN location choice function
 					Windscribe_Initiate
@@ -549,41 +729,55 @@ if [ $NumberResponse == "1" ]; then
 					Program_Choices					
 
 
-						elif [ $NumberResponse == "6" ]; then
+						elif [ "$NumberResponse" == "6" ]; then
 						echo ''						
 						echo "-----------"
 						echo "Let's Begin"
 						echo "-----------"
 
-						#Disconnect from Wireless Network
-						Disconnect_Wireless_Network
+						#Finds out what WiFi Interfaces are Active & Inactive
+						Def_WiFi_Adapter_Connected
+
+						#Finds out what Ethernet Interfaces are Active & Inactive
+						Def_Eth_Adapter_Connected
 
 						#Changes the Inactive Adapter's Mac Address
 						Mac_Address_Inactive_Changer
-
-						#Connect to Wireless Network
-						Connect_Wireless_Network
 	
 						#Return to Start
 						Program_Choices								
 
-							elif [ $NumberResponse == "e" ] || [ $NumberResponse == "E" ]; then
-							echo ''							
-							echo "-------"
-							echo "Goodbye"
-							echo "-------"
 
-							#Exit Randomize Me Kap'n
-							exit 1
+							elif [ "$NumberResponse" == "7" ]; then
+							echo ''						
+							echo "-----------"
+							echo "Let's Begin"
+							echo "-----------"
+
+							#Randomize Computer's Host Name
+							Random_Host_Name
+
+							#Return to Start
+							Program_Choices								
+
+								elif [ "$NumberResponse" == "e" ] || [ "$NumberResponse" == "E" ]; then
+								echo ''							
+								echo "-------"
+								echo "Goodbye"
+								echo "-------"
+
+								#Exit Randomize Me Kap'n
+								exit 1
 	
-								else #Return to Start w/h Input Instruction
-								echo ''								
-								echo "------------------------------"
-								echo "Please Choose a Correct Input!"
-								echo "------------------------------"
-								Program_Choices
+									else #Return to Start w/h Input Instruction
+									echo ''								
+									echo "------------------------------"
+									echo "Please Choose a Correct Input!"
+									echo "------------------------------"
+									Program_Choices
 
 fi
+
 }
 
 #What's My Name???
@@ -621,16 +815,25 @@ echo "# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 echo ''
 
 #Print "Please Enter to Proceed"
-echo 'Please Enter Account Password to Proceed'
+     echo ''
+     echo "----------------------------------------------------"
+     echo "      Please Enter Account Password to Proceed      "
+     echo "----------------------------------------------------"
+     echo ''
 
 #Initiate admin access so that programs do not require further input of user account's password
 #Print "Let's Begin" 
-sudo echo "--------------------------------------------------"
-echo      "                    Let's Begin                   "
+sudo echo ''
+     echo "----------------------------------------------------"
+     echo "                     Let's Begin                    "
+     echo "----------------------------------------------------"
+     echo ''
+
+#Check to see if "macchanger" is installed on the system
+Macchanger_Installed
 
 #Start the User Input Prompts
 Program_Choices
-
 
 
 
